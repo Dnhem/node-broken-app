@@ -22,9 +22,9 @@ beforeEach(async function() {
   }
 
   let sampleUsers = [
-    ["u1", "fn1", "ln1", "email1", "phone1", await _pwd("pwd1"), false],
-    ["u2", "fn2", "ln2", "email2", "phone2", await _pwd("pwd2"), false],
-    ["u3", "fn3", "ln3", "email3", "phone3", await _pwd("pwd3"), true]
+    [ "u1", "fn1", "ln1", "email1", "phone1", await _pwd("pwd1"), false ],
+    [ "u2", "fn2", "ln2", "email2", "phone2", await _pwd("pwd2"), false ],
+    [ "u3", "fn3", "ln3", "email3", "phone3", await _pwd("pwd3"), true ],
   ];
 
   for (let user of sampleUsers) {
@@ -38,16 +38,14 @@ beforeEach(async function() {
 
 describe("POST /auth/register", function() {
   test("should allow a user to register in", async function() {
-    const response = await request(app)
-      .post("/auth/register")
-      .send({
-        username: "new_user",
-        password: "new_password",
-        first_name: "new_first",
-        last_name: "new_last",
-        email: "new@newuser.com",
-        phone: "1233211221"
-      });
+    const response = await request(app).post("/auth/register").send({
+      username: "new_user",
+      password: "new_password",
+      first_name: "new_first",
+      last_name: "new_last",
+      email: "new@newuser.com",
+      phone: "1233211221",
+    });
     expect(response.statusCode).toBe(201);
     expect(response.body).toEqual({ token: expect.any(String) });
 
@@ -57,32 +55,28 @@ describe("POST /auth/register", function() {
   });
 
   test("should not allow a user to register with an existing username", async function() {
-    const response = await request(app)
-      .post("/auth/register")
-      .send({
-        username: "u1",
-        password: "pwd1",
-        first_name: "new_first",
-        last_name: "new_last",
-        email: "new@newuser.com",
-        phone: "1233211221"
-      });
+    const response = await request(app).post("/auth/register").send({
+      username: "u1",
+      password: "pwd1",
+      first_name: "new_first",
+      last_name: "new_last",
+      email: "new@newuser.com",
+      phone: "1233211221",
+    });
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
       status: 400,
-      message: `There already exists a user with username 'u1'`
+      message: `There already exists a user with username 'u1'`,
     });
   });
 });
 
 describe("POST /auth/login", function() {
   test("should allow a correct username/password to log in", async function() {
-    const response = await request(app)
-      .post("/auth/login")
-      .send({
-        username: "u1",
-        password: "pwd1"
-      });
+    const response = await request(app).post("/auth/login").send({
+      username: "u1",
+      password: "pwd1",
+    });
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ token: expect.any(String) });
 
@@ -123,8 +117,16 @@ describe("GET /users/[username]", function() {
       first_name: "fn1",
       last_name: "ln1",
       email: "email1",
-      phone: "phone1"
+      phone: "phone1",
     });
+  });
+
+  // TODO: TESTS BUG #2
+  test("return 404 if user not found", async function() {
+    const response = await request(app)
+      .get("/users/fiddochio")
+      .send({ _token: tokens.u1 });
+    expect(response.statusCode).toBe(404);
   });
 });
 
@@ -153,7 +155,7 @@ describe("PATCH /users/[username]", function() {
       email: "email1",
       phone: "phone1",
       admin: false,
-      password: expect.any(String)
+      password: expect.any(String),
     });
   });
 

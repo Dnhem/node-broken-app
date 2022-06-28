@@ -14,6 +14,7 @@ class User {
     last_name,
     email,
     phone,
+    admin,
   }) {
     const duplicateCheck = await db.query(
       `SELECT username 
@@ -33,10 +34,10 @@ class User {
 
     const result = await db.query(
       `INSERT INTO users 
-          (username, password, first_name, last_name, email, phone) 
-        VALUES ($1, $2, $3, $4, $5, $6) 
-        RETURNING username, password, first_name, last_name, email, phone`,
-      [ username, hashedPassword, first_name, last_name, email, phone ]
+          (username, password, first_name, last_name, email, phone, admin) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        RETURNING username, password, first_name, last_name, email, phone, admin`,
+      [ username, hashedPassword, first_name, last_name, email, phone, admin ]
     );
 
     return result.rows[0];
@@ -99,21 +100,19 @@ class User {
   static async get(username) {
     const result = await db.query(
       `SELECT username,
-                first_name,
-                last_name,
-                email,
-                phone
-         FROM users
-         WHERE username = $1`,
+                  first_name,
+                  last_name,
+                  email,
+                  phone
+          FROM users
+          WHERE username = $1`,
       [ username ]
     );
-
     const user = result.rows[0];
-    console.log(user);
     if (!user) {
+      //FIXME: FIXES BUG #2
       throw new ExpressError("No such user", 404);
     }
-
     return user;
   }
 

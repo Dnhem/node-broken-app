@@ -6,6 +6,7 @@ CREATE TABLE users (
     email text NOT NULL,
     phone text NOT NULL,
     password text NOT NULL,
-    admin boolean DEFAULT false
+    -- FIXME: Allow user admin create
+    admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 

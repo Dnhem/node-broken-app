@@ -22,6 +22,7 @@ router.post("/register", async function(req, res, next) {
       last_name,
       email,
       phone,
+      admin,
     } = req.body;
     let user = await User.register({
       username,
@@ -30,8 +31,8 @@ router.post("/register", async function(req, res, next) {
       last_name,
       email,
       phone,
+      admin,
     });
-    console.log(user);
     const token = createTokenForUser(username, user.admin);
     return res.status(201).json({ token });
   } catch (err) {
